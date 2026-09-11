@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jurnal Sarana</title>
+<style>
+  :root{
+    --ink:#1b2a41;
+    --ink-soft:#3d5170;
+    --paper:#f2efe6;
+    --paper-card:#fffdf8;
+    --line:#d8d2c2;
+    --amber:#b9762f;
+    --amber-bg:#f5e6d3;
+    --green:#3f7358;
+    --green-bg:#dcebe2;
+    --blue:#33587a;
+    --blue-bg:#dbe6ee;
+    --red:#a13d3d;
+    --red-bg:#f3dede;
+    --radius:6px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Georgia','Source Serif Pro',serif;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  .sans{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  h1,h2,h3{font-family:'Georgia','Source Serif Pro',serif;margin:0 0 4px;font-weight:600;}
+  a{color:var(--ink-soft);}
+  button{
+    font-family:inherit;
+    cursor:pointer;
+    border:1px solid var(--ink);
+    background:var(--ink);
+    color:var(--paper-card);
+    border-radius:var(--radius);
+    padding:9px 16px;
+    font-size:14px;
+  }
+  button.secondary{background:transparent;color:var(--ink);}
+  button.ghost{border:none;background:none;color:var(--ink-soft);padding:6px 10px;}
+  button.danger{background:var(--red);border-color:var(--red);}
+  input,select,textarea{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:9px 10px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:#fff;
+    font-size:14px;
+    color:var(--ink);
+    width:100%;
+  }
+  label{font-size:12.5px;color:var(--ink-soft);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;display:block;margin-bottom:4px;}
+
+  /* Login */
+  #loginScreen{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+  }
+  .login-box{
+    background:var(--paper-card);border:1px solid var(--line);border-radius:10px;
+    padding:36px 30px;max-width:340px;width:100%;text-align:center;
+    box-shadow:0 1px 3px rgba(27,42,65,.08);
+  }
+  .login-box h1{font-size:26px;margin-bottom:2px;}
+  .login-box p.sans{color:var(--ink-soft);font-size:13px;margin:0 0 22px;}
+  .login-box input{text-align:center;letter-spacing:2px;margin-bottom:12px;}
+  .login-error{color:var(--red);font-size:13px;min-height:18px;margin-bottom:8px;}
+
+  /* App shell */
+  #app{display:none;}
+  header.topbar{
+    background:var(--ink);color:var(--paper-card);
+    padding:16px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+  }
+  header.topbar h1{color:#fff;font-size:20px;}
+  header.topbar .sub{font-family:inherit;font-size:12px;color:#c9d3e0;font-family:-apple-system,BlinkMacSystemFont,sans-serif;}
+  nav.tabs{
+    display:flex;gap:2px;background:var(--paper-card);border-bottom:1px solid var(--line);
+    padding:0 16px;overflow-x:auto;
+  }
+  nav.tabs button{
+    background:none;border:none;color:var(--ink-soft);border-radius:0;
+    padding:14px 16px;font-size:13.5px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+    border-bottom:2px solid transparent;white-space:nowrap;
+  }
+  nav.tabs button.active{color:var(--ink);border-bottom:2px solid var(--amber);font-weight:600;}
+  main{padding:20px;max-width:1100px;margin:0 auto;}
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  .card{
+    background:var(--paper-card);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:16px;
+  }
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;}
+  .row > div{flex:1;min-width:150px;}
+
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+
+  table{width:100%;border-collapse:collapse;font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:13.5px;}
+  thead th{
+    text-align:left;font-size:11.5px;color:var(--ink-soft);font-weight:600;
+    border-bottom:1px solid var(--line);padding:8px 10px;
+  }
+  tbody td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  tbody tr:hover{background:#faf8f2;}
+  .thumb{width:40px;height:40px;border-radius:6px;object-fit:cover;background:var(--line);display:block;}
+  .badge{
+    display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;
+  }
+  .badge.dipinjam{background:var(--amber-bg);color:var(--amber);}
+  .badge.kembali{background:var(--green-bg);color:var(--green);}
+  .empty{text-align:center;padding:40px 20px;color:var(--ink-soft);font-family:-apple-system,BlinkMacSystemFont,sans-serif;}
+
+  .recap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px;}
+  .recap-item{background:var(--paper-card);border:1px solid var(--line);border-radius:10px;padding:16px;}
+  .recap-item .num{font-size:28px;font-weight:700;}
+  .recap-item .label{font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:12px;color:var(--ink-soft);}
+
+  .period-toggle{display:flex;gap:0;border:1px solid var(--ink);border-radius:var(--radius);overflow:hidden;width:fit-content;}
+  .period-toggle button{border:none;border-radius:0;background:transparent;color:var(--ink);padding:8px 18px;font-size:13px;}
+  .period-toggle button.active{background:var(--ink);color:#fff;}
+  .section-title{font-size:14px;margin:22px 0 10px;color:var(--ink-soft);font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-weight:600;}
+
+  /* Modal */
+  .overlay{
+    display:none;position:fixed;inset:0;background:rgba(27,42,65,.45);
+    align-items:flex-start;justify-content:center;padding:30px 14px;overflow-y:auto;z-index:50;
+  }
+  .overlay.active{display:flex;}
+  .modal{background:var(--paper-card);border-radius:10px;max-width:520px;width:100%;padding:22px;}
+  .modal h2{font-size:19px;margin-bottom:16px;}
+  .field{margin-bottom:14px;}
+  .photo-block{border:1px solid var(--line);border-radius:8px;padding:12px;background:#faf8f2;}
+  .photo-block .sub-label{font-size:12px;color:var(--ink-soft);font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin:10px 0 6px;}
+  .photo-block .sub-label:first-child{margin-top:0;}
+  .paste-zone{
+    border:1.5px dashed var(--line);border-radius:8px;padding:16px;text-align:center;
+    font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:12.5px;color:var(--ink-soft);
+    background:#fff;cursor:text;
+  }
+  .preview-wrap{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;}
+  .preview-item{position:relative;width:70px;height:70px;}
+  .preview-item img{width:100%;height:100%;object-fit:cover;border-radius:6px;border:1px solid var(--line);}
+  .preview-item .remove-x{
+    position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;
+    background:var(--red);color:#fff;border:2px solid var(--paper-card);font-size:12px;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1;
+  }
+  .link-chip-row{display:flex;gap:6px;}
+  .thumb-stack{position:relative;width:40px;height:40px;}
+  .thumb-count{
+    position:absolute;bottom:-4px;right:-4px;background:var(--ink);color:#fff;font-size:9px;
+    border-radius:8px;padding:1px 4px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  }
+  .export-btns{display:flex;gap:8px;flex-wrap:wrap;}
+  .export-btns button{font-size:12.5px;padding:7px 12px;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
+  .status-msg{font-size:12.5px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin-top:6px;min-height:16px;}
+  .status-msg.err{color:var(--red);}
+  .status-msg.ok{color:var(--green);}
+
+  @media(max-width:640px){
+    table thead{display:none;}
+    table, tbody, tr, td{display:block;width:100%;}
+    tbody tr{border:1px solid var(--line);border-radius:8px;margin-bottom:10px;padding:8px 4px;}
+    tbody td{border:none;padding:4px 10px;}
+    tbody td:before{content:attr(data-label);font-weight:600;color:var(--ink-soft);display:inline-block;min-width:90px;font-size:11px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h1>Jurnal Sarana</h1>
+    <p class="sans">Masuk sebagai admin untuk mengelola jurnal sarana</p>
+    <input type="password" id="loginPassword" placeholder="Kata sandi admin" autocomplete="off">
+    <div class="login-error" id="loginError"></div>
+    <button style="width:100%" onclick="doLogin()">Masuk</button>
+    <p class="sans" id="firebaseWarning" style="color:var(--red);font-size:11.5px;margin-top:16px;display:none;">
+      Firebase belum terhubung. Cek firebaseConfig, Firestore, dan Storage.
+    </p>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+  <header class="topbar">
+    <div>
+      <h1>Jurnal Sarana</h1>
+      <div class="sub">Peminjaman barang &amp; kegiatan sarana</div>
+    </div>
+    <button class="secondary" style="color:#fff;border-color:#5a6c85" onclick="doLogout()">Keluar</button>
+  </header>
+
+  <nav class="tabs sans">
+    <button class="tab-btn active" data-tab="peminjaman">Peminjaman</button>
+    <button class="tab-btn" data-tab="kegiatan">Kegiatan Sarana</button>
+    <button class="tab-btn" data-tab="rekap">Rekap</button>
+    <button class="tab-btn" data-tab="pengaturan">Pengaturan</button>
+  </nav>
+
+  <main>
+
+    <!-- ================= TAB: PEMINJAMAN ================= -->
+    <section class="panel active" id="panel-peminjaman">
+      <div class="toolbar">
+        <div class="row" style="flex:1">
+          <div>
+            <label>Cari</label>
+            <input type="text" id="searchInput" placeholder="Nama atau barang...">
+          </div>
+          <div>
+            <label>Status</label>
+            <select id="filterStatus">
+              <option value="">Semua</option>
+              <option value="Dipinjam">Dipinjam</option>
+              <option value="Dikembalikan">Dikembalikan</option>
+            </select>
+          </div>
+        </div>
+        <div class="export-btns">
+          <button class="secondary" onclick="exportDaftarExcel()">Export Excel</button>
+          <button class="secondary" onclick="exportDaftarPDF()">Export PDF</button>
+          <button onclick="openModal()">+ Catat Peminjaman</button>
+        </div>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden;">
+        <table>
+          <thead>
+            <tr>
+              <th>Foto</th><th>Peminjam</th><th>Barang</th><th>Tgl Pinjam</th>
+              <th>Tgl Kembali</th><th>Status</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+        <div class="empty" id="emptyState" style="display:none;">Belum ada catatan peminjaman.</div>
+      </div>
+    </section>
+
+    <!-- ================= TAB: KEGIATAN SARANA ================= -->
+    <section class="panel" id="panel-kegiatan">
+      <div class="toolbar">
+        <div class="row" style="flex:1">
+          <div>
+            <label>Cari</label>
+            <input type="text" id="searchKegiatan" placeholder="Cari catatan kegiatan...">
+          </div>
+        </div>
+        <div class="export-btns">
+          <button class="secondary" onclick="exportKegiatanExcel()">Export Excel</button>
+          <button class="secondary" onclick="exportKegiatanPDF()">Export PDF</button>
+          <button onclick="openKegiatanModal()">+ Catat Kegiatan</button>
+        </div>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden;">
+        <table>
+          <thead><tr><th>Tanggal</th><th>Catatan Kegiatan</th><th>Link Drive</th><th></th></tr></thead>
+          <tbody id="kegiatanTableBody"></tbody>
+        </table>
+        <div class="empty" id="kegiatanEmpty" style="display:none;">Belum ada catatan kegiatan sarana.</div>
+      </div>
+    </section>
+
+    <!-- ================= TAB: REKAP ================= -->
+    <section class="panel" id="panel-rekap">
+      <div class="row" style="margin-bottom:16px;align-items:flex-end;">
+        <div style="flex:none;">
+          <label>Periode</label>
+          <div class="period-toggle">
+            <button type="button" class="period-btn active" data-period="bulanan">Bulanan</button>
+            <button type="button" class="period-btn" data-period="tahunan">Tahunan</button>
+          </div>
+        </div>
+        <div id="recapMonthWrap" style="max-width:180px;">
+          <label>Bulan</label>
+          <select id="recapMonth"></select>
+        </div>
+        <div style="max-width:140px;">
+          <label>Tahun</label>
+          <select id="recapYear"></select>
+        </div>
+      </div>
+
+      <div class="recap-grid" id="recapGrid"></div>
+      <div class="export-btns" style="margin-bottom:10px;">
+        <button class="secondary" onclick="exportRekapExcel()">Export Excel</button>
+        <button class="secondary" onclick="exportRekapPDF()">Export PDF</button>
+      </div>
+
+      <div class="section-title">Peminjaman pada periode ini</div>
+      <div class="card" style="padding:0;overflow:hidden;">
+        <table>
+          <thead><tr><th>Peminjam</th><th>Barang</th><th>Tgl Pinjam</th><th>Status</th></tr></thead>
+          <tbody id="recapPeminjamanBody"></tbody>
+        </table>
+        <div class="empty" id="recapPeminjamanEmpty" style="display:none;">Tidak ada data peminjaman pada periode ini.</div>
+      </div>
+
+      <div class="section-title">Kegiatan sarana pada periode ini</div>
+      <div class="card" style="padding:0;overflow:hidden;">
+        <table>
+          <thead><tr><th>Tanggal</th><th>Catatan Kegiatan</th><th>Link Drive</th></tr></thead>
+          <tbody id="recapKegiatanBody"></tbody>
+        </table>
+        <div class="empty" id="recapKegiatanEmpty" style="display:none;">Tidak ada catatan kegiatan pada periode ini.</div>
+      </div>
+    </section>
+
+    <!-- ================= TAB: PENGATURAN ================= -->
+    <section class="panel" id="panel-pengaturan">
+      <div class="card" style="max-width:380px;">
+        <h3 style="font-size:16px;margin-bottom:14px;">Ganti Kata Sandi Admin</h3>
+        <div class="field">
+          <label>Kata sandi saat ini</label>
+          <input type="password" id="currentPass">
+        </div>
+        <div class="field">
+          <label>Kata sandi baru</label>
+          <input type="password" id="newPass">
+        </div>
+        <button onclick="changePassword()">Simpan Kata Sandi</button>
+        <div class="status-msg" id="passMsg"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ MODAL: TAMBAH / EDIT PEMINJAMAN ============ -->
+<div class="overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitle">Catat Peminjaman</h2>
+
+    <div class="field">
+      <label>Nama Peminjam</label>
+      <input type="text" id="f_nama" placeholder="Nama lengkap">
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Barang yang Dipinjam</label>
+        <input type="text" id="f_barang" placeholder="Contoh: Proyektor, Laptop, dll">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Tanggal Pinjam</label>
+        <input type="date" id="f_tglPinjam">
+      </div>
+      <div class="field">
+        <label>Tanggal Kembali</label>
+        <input type="date" id="f_tglKembali">
+      </div>
+    </div>
+    <div class="field">
+      <label>Status</label>
+      <select id="f_status">
+        <option value="Dipinjam">Dipinjam</option>
+        <option value="Dikembalikan">Dikembalikan</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Foto Peminjam (boleh lebih dari satu)</label>
+      <div class="photo-block">
+        <div class="sub-label">Ambil langsung dari kamera</div>
+        <button type="button" class="secondary sans" style="width:100%;" onclick="document.getElementById('f_fotoCamera').click()">📷 Buka Kamera</button>
+        <input type="file" id="f_fotoCamera" accept="image/*" capture="environment" style="display:none">
+
+        <div class="sub-label">Unggah dari perangkat</div>
+        <input type="file" id="f_fotoFile" accept="image/*" multiple>
+
+        <div class="sub-label">Atau tempel link foto</div>
+        <div class="link-chip-row">
+          <input type="url" id="f_fotoUrl" placeholder="https://drive.google.com/... atau URL gambar">
+          <button type="button" class="secondary sans" style="white-space:nowrap;" onclick="addLinkPhoto()">+ Tambah</button>
+        </div>
+
+        <div class="sub-label">Atau tempel dari clipboard</div>
+        <div class="paste-zone" id="pasteZone" tabindex="0">Klik area ini lalu tekan Ctrl+V / Cmd+V (bisa berkali-kali)</div>
+
+        <div class="preview-wrap" id="previewWrap"></div>
+      </div>
+    </div>
+
+    <div class="status-msg" id="modalMsg"></div>
+
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal()">Batal</button>
+      <button id="deleteBtn" class="danger" style="display:none;" onclick="deleteEntry()">Hapus</button>
+      <button onclick="saveEntry()" id="saveBtn">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: TAMBAH / EDIT KEGIATAN SARANA ============ -->
+<div class="overlay" id="kegiatanModalOverlay">
+  <div class="modal">
+    <h2 id="kegiatanModalTitle">Catat Kegiatan Sarana</h2>
+
+    <div class="field">
+      <label>Tanggal Kegiatan</label>
+      <input type="date" id="k_tanggal">
+    </div>
+    <div class="field">
+      <label>Catatan Kegiatan</label>
+      <textarea id="k_catatan" rows="3" placeholder="Deskripsi kegiatan sarana"></textarea>
+    </div>
+    <div class="field">
+      <label>Link Drive</label>
+      <input type="url" id="k_linkDrive" placeholder="https://drive.google.com/...">
+    </div>
+
+    <div class="status-msg" id="kegiatanModalMsg"></div>
+
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeKegiatanModal()">Batal</button>
+      <button id="kegiatanDeleteBtn" class="danger" style="display:none;" onclick="deleteKegiatan()">Hapus</button>
+      <button onclick="saveKegiatan()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FIREBASE ============ -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+/* =========================================================================
+   1) KONFIGURASI FIREBASE
+   ========================================================================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyDwTB3Qrta_K-vT7bMndaO7T8yVYL-rbUA",
+  authDomain: "sarana-dc659.firebaseapp.com",
+  projectId: "sarana-dc659",
+  storageBucket: "sarana-dc659.firebasestorage.app",
+  messagingSenderId: "344387388442",
+  appId: "1:344387388442:web:c37e3f2eeb0a85a7883da3"
+};
+
+let db, storage, firebaseReady = false;
+try {
+  if (!firebaseConfig.apiKey.startsWith("GANTI")) {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    storage = firebase.storage();
+    firebaseReady = true;
+  } else {
+    document.getElementById('firebaseWarning').style.display = 'block';
+  }
+} catch (e) {
+  console.error("Firebase init error:", e);
+  document.getElementById('firebaseWarning').style.display = 'block';
+}
+
+/* =========================================================================
+   2) STATE
+   ========================================================================= */
+let entries = [];          // data peminjaman (live dari Firestore)
+let kegiatanEntries = [];  // data kegiatan sarana (live dari Firestore)
+let editingId = null;
+let editingKegiatanId = null;
+
+// Foto peminjaman: existingPhotos = URL yang sudah tersimpan (saat edit, bisa dihapus)
+// pendingPhotos = foto baru yang ditambahkan di sesi ini, belum diupload
+let existingPhotos = [];
+let pendingPhotos = [];
+let adminPasswordCache = "123";
+
+const monthNames = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+let currentPeriod = 'bulanan';
+
+/* =========================================================================
+   3) LOGIN
+   ========================================================================= */
+async function loadAdminPassword() {
+  if (!firebaseReady) return adminPasswordCache;
+  try {
+    const doc = await db.collection('settings').doc('admin').get();
+    if (doc.exists && doc.data().password) {
+      adminPasswordCache = doc.data().password;
+    } else {
+      await db.collection('settings').doc('admin').set({ password: "123" });
+      adminPasswordCache = "123";
+    }
+  } catch (e) { console.error(e); }
+  return adminPasswordCache;
+}
+
+async function doLogin() {
+  const input = document.getElementById('loginPassword').value;
+  const errBox = document.getElementById('loginError');
+  const pass = await loadAdminPassword();
+  if (input === pass) {
+    errBox.textContent = "";
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    sessionStorage.setItem('js_logged_in', '1');
+    initAppData();
+  } else {
+    errBox.textContent = "Kata sandi salah. Coba lagi.";
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('js_logged_in');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginPassword').value = '';
+}
+
+document.getElementById('loginPassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+async function changePassword() {
+  const cur = document.getElementById('currentPass').value;
+  const next = document.getElementById('newPass').value;
+  const msg = document.getElementById('passMsg');
+  const actual = await loadAdminPassword();
+  if (cur !== actual) { msg.textContent = "Kata sandi saat ini salah."; msg.className = "status-msg err"; return; }
+  if (!next || next.length < 3) { msg.textContent = "Kata sandi baru minimal 3 karakter."; msg.className = "status-msg err"; return; }
+  if (!firebaseReady) { msg.textContent = "Firebase belum terhubung."; msg.className = "status-msg err"; return; }
+  try {
+    await db.collection('settings').doc('admin').set({ password: next });
+    adminPasswordCache = next;
+    msg.textContent = "Kata sandi berhasil diganti.";
+    msg.className = "status-msg ok";
+    document.getElementById('currentPass').value = '';
+    document.getElementById('newPass').value = '';
+  } catch (e) {
+    msg.textContent = "Gagal menyimpan: " + e.message;
+    msg.className = "status-msg err";
+  }
+}
+
+/* =========================================================================
+   4) NAVIGASI TAB
+   ========================================================================= */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'rekap') renderRekap();
+  });
+});
+
+document.querySelectorAll('.period-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentPeriod = btn.dataset.period;
+    document.getElementById('recapMonthWrap').style.display = currentPeriod === 'bulanan' ? 'block' : 'none';
+    renderRekap();
+  });
+});
+
+/* =========================================================================
+   5) MEMUAT & MENYIMPAN DATA (FIRESTORE REALTIME)
+   ========================================================================= */
+function initAppData() {
+  populateYearSelectors();
+  if (!firebaseReady) { renderTable(); renderKegiatanTable(); return; }
+
+  db.collection('peminjaman').orderBy('tglPinjam', 'desc').onSnapshot(snapshot => {
+    entries = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderTable();
+    renderRekap();
+  }, err => console.error("Snapshot error (peminjaman):", err));
+
+  db.collection('kegiatan').orderBy('tanggal', 'desc').onSnapshot(snapshot => {
+    kegiatanEntries = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderKegiatanTable();
+    renderRekap();
+  }, err => console.error("Snapshot error (kegiatan):", err));
+}
+
+function populateYearSelectors() {
+  const thisYear = new Date().getFullYear();
+  const years = [];
+  for (let y = thisYear + 1; y >= thisYear - 5; y--) years.push(y);
+
+  const monthSel = document.getElementById('recapMonth');
+  monthNames.forEach((m, i) => {
+    const o = document.createElement('option'); o.value = i; o.textContent = m; monthSel.appendChild(o);
+  });
+  monthSel.value = new Date().getMonth();
+
+  const yearSel = document.getElementById('recapYear');
+  years.forEach(y => { const o = document.createElement('option'); o.value = y; o.textContent = y; yearSel.appendChild(o); });
+  yearSel.value = thisYear;
+
+  document.getElementById('recapMonth').addEventListener('change', renderRekap);
+  document.getElementById('recapYear').addEventListener('change', renderRekap);
+}
+
+/* =========================================================================
+   6) TABEL DAFTAR PEMINJAMAN
+   ========================================================================= */
+document.getElementById('searchInput').addEventListener('input', renderTable);
+document.getElementById('filterStatus').addEventListener('change', renderTable);
+
+function renderTable() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const statusFilter = document.getElementById('filterStatus').value;
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+
+  const filtered = entries.filter(e => {
+    const matchSearch = !search || (e.nama||'').toLowerCase().includes(search) || (e.barang||'').toLowerCase().includes(search);
+    const matchStatus = !statusFilter || e.status === statusFilter;
+    return matchSearch && matchStatus;
+  });
+
+  document.getElementById('emptyState').style.display = filtered.length ? 'none' : 'block';
+
+  filtered.forEach(e => {
+    const tr = document.createElement('tr');
+    const fotos = Array.isArray(e.fotoUrls) ? e.fotoUrls : (e.fotoUrl ? [e.fotoUrl] : []);
+    const fotoTag = fotos.length
+      ? `<div class="thumb-stack"><img class="thumb" src="${fotos[0]}" alt="foto">${fotos.length > 1 ? `<span class="thumb-count">+${fotos.length - 1}</span>` : ''}</div>`
+      : `<div class="thumb"></div>`;
+    const badgeClass = e.status === 'Dikembalikan' ? 'kembali' : 'dipinjam';
+    tr.innerHTML = `
+      <td data-label="Foto">${fotoTag}</td>
+      <td data-label="Peminjam">${escapeHtml(e.nama || '-')}</td>
+      <td data-label="Barang">${escapeHtml(e.barang || '-')}</td>
+      <td data-label="Tgl Pinjam">${formatDate(e.tglPinjam)}</td>
+      <td data-label="Tgl Kembali">${formatDate(e.tglKembali)}</td>
+      <td data-label="Status"><span class="badge ${badgeClass}">${e.status}</span></td>
+      <td data-label=""><button class="ghost sans" onclick="openModal('${e.id}')">Edit</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function formatDate(s) {
+  if (!s) return '-';
+  const d = new Date(s + 'T00:00:00');
+  if (isNaN(d)) return s;
+  return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+/* =========================================================================
+   7) MODAL TAMBAH / EDIT PEMINJAMAN (foto)
+   ========================================================================= */
+document.getElementById('pasteZone').addEventListener('paste', e => {
+  const items = e.clipboardData.items;
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const blob = item.getAsFile();
+      const reader = new FileReader();
+      reader.onload = ev => {
+        pendingPhotos.push({ kind: 'dataurl', value: ev.target.result, previewSrc: ev.target.result });
+        renderPreviews();
+      };
+      reader.readAsDataURL(blob);
+    }
+  }
+});
+
+document.getElementById('f_fotoFile').addEventListener('change', e => {
+  const files = Array.from(e.target.files || []);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      pendingPhotos.push({ kind: 'file', value: file, previewSrc: ev.target.result });
+      renderPreviews();
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+});
+
+document.getElementById('f_fotoCamera').addEventListener('change', e => {
+  const files = Array.from(e.target.files || []);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      pendingPhotos.push({ kind: 'file', value: file, previewSrc: ev.target.result });
+      renderPreviews();
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+});
+
+function addLinkPhoto() {
+  const input = document.getElementById('f_fotoUrl');
+  const url = input.value.trim();
+  if (!url) return;
+  pendingPhotos.push({ kind: 'link', value: url, previewSrc: url });
+  input.value = '';
+  renderPreviews();
+}
+
+function renderPreviews() {
+  const wrap = document.getElementById('previewWrap');
+  let html = '';
+  existingPhotos.forEach((url, i) => {
+    html += `<div class="preview-item"><img src="${url}" alt="foto"><div class="remove-x" onclick="removeExistingPhoto(${i})">&times;</div></div>`;
+  });
+  pendingPhotos.forEach((p, i) => {
+    html += `<div class="preview-item"><img src="${p.previewSrc}" alt="foto"><div class="remove-x" onclick="removePendingPhoto(${i})">&times;</div></div>`;
+  });
+  wrap.innerHTML = html;
+}
+function removeExistingPhoto(i) { existingPhotos.splice(i, 1); renderPreviews(); }
+function removePendingPhoto(i) { pendingPhotos.splice(i, 1); renderPreviews(); }
+
+function openModal(id) {
+  editingId = id || null;
+  pendingPhotos = [];
+  existingPhotos = [];
+  document.getElementById('modalMsg').textContent = '';
+  document.getElementById('deleteBtn').style.display = id ? 'inline-block' : 'none';
+  document.getElementById('modalTitle').textContent = id ? 'Ubah Catatan Peminjaman' : 'Catat Peminjaman';
+
+  if (id) {
+    const e = entries.find(x => x.id === id);
+    document.getElementById('f_nama').value = e.nama || '';
+    document.getElementById('f_barang').value = e.barang || '';
+    document.getElementById('f_tglPinjam').value = e.tglPinjam || '';
+    document.getElementById('f_tglKembali').value = e.tglKembali || '';
+    document.getElementById('f_status').value = e.status || 'Dipinjam';
+    document.getElementById('f_fotoUrl').value = '';
+    existingPhotos = Array.isArray(e.fotoUrls) ? [...e.fotoUrls] : (e.fotoUrl ? [e.fotoUrl] : []);
+  } else {
+    ['f_nama','f_barang','f_tglKembali','f_fotoUrl'].forEach(id2 => document.getElementById(id2).value = '');
+    document.getElementById('f_tglPinjam').value = new Date().toISOString().slice(0,10);
+    document.getElementById('f_status').value = 'Dipinjam';
+    document.getElementById('f_fotoFile').value = '';
+  }
+  renderPreviews();
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  editingId = null;
+}
+
+async function saveEntry() {
+  const msg = document.getElementById('modalMsg');
+  const nama = document.getElementById('f_nama').value.trim();
+  const barang = document.getElementById('f_barang').value.trim();
+  const tglPinjam = document.getElementById('f_tglPinjam').value;
+
+  if (!nama || !barang || !tglPinjam) {
+    msg.textContent = 'Nama, barang, dan tanggal pinjam wajib diisi.';
+    msg.className = 'status-msg err';
+    return;
+  }
+  if (!firebaseReady) {
+    msg.textContent = 'Firebase belum terhubung.';
+    msg.className = 'status-msg err';
+    return;
+  }
+
+  msg.textContent = 'Menyimpan...';
+  msg.className = 'status-msg';
+
+  try {
+    const uploadedUrls = [];
+    for (const p of pendingPhotos) {
+      if (p.kind === 'file') uploadedUrls.push(await uploadToStorage(p.value));
+      else if (p.kind === 'dataurl') uploadedUrls.push(await uploadDataUrlToStorage(p.value));
+      else if (p.kind === 'link') uploadedUrls.push(p.value);
+    }
+    const fotoUrls = [...existingPhotos, ...uploadedUrls];
+
+    const data = {
+      nama, barang, tglPinjam,
+      tglKembali: document.getElementById('f_tglKembali').value || null,
+      status: document.getElementById('f_status').value,
+      fotoUrls,
+      fotoUrl: fotoUrls[0] || null,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    if (editingId) {
+      await db.collection('peminjaman').doc(editingId).update(data);
+    } else {
+      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection('peminjaman').add(data);
+    }
+    closeModal();
+  } catch (e) {
+    msg.textContent = 'Gagal menyimpan: ' + e.message;
+    msg.className = 'status-msg err';
+  }
+}
+
+function uploadToStorage(file) {
+  const ref = storage.ref().child('foto-peminjam/' + Date.now() + '-' + file.name);
+  return ref.put(file).then(snap => snap.ref.getDownloadURL());
+}
+function uploadDataUrlToStorage(dataUrl) {
+  const ref = storage.ref().child('foto-peminjam/' + Date.now() + '-paste.png');
+  return ref.putString(dataUrl, 'data_url').then(snap => snap.ref.getDownloadURL());
+}
+
+async function deleteEntry() {
+  if (!editingId) return;
+  if (!confirm('Hapus catatan peminjaman ini?')) return;
+  try {
+    await db.collection('peminjaman').doc(editingId).delete();
+    closeModal();
+  } catch (e) {
+    document.getElementById('modalMsg').textContent = 'Gagal menghapus: ' + e.message;
+    document.getElementById('modalMsg').className = 'status-msg err';
+  }
+}
+
+/* =========================================================================
+   8) KEGIATAN SARANA (catatan terpisah dari peminjaman)
+   ========================================================================= */
+document.getElementById('searchKegiatan').addEventListener('input', renderKegiatanTable);
+
+function renderKegiatanTable() {
+  const search = document.getElementById('searchKegiatan').value.toLowerCase();
+  const tbody = document.getElementById('kegiatanTableBody');
+  tbody.innerHTML = '';
+
+  const filtered = kegiatanEntries.filter(k => !search || (k.catatan||'').toLowerCase().includes(search));
+  document.getElementById('kegiatanEmpty').style.display = filtered.length ? 'none' : 'block';
+
+  filtered.forEach(k => {
+    const tr = document.createElement('tr');
+    const linkTag = k.linkDrive ? `<a href="${k.linkDrive}" target="_blank" rel="noopener">Buka Link</a>` : '-';
+    tr.innerHTML = `
+      <td data-label="Tanggal">${formatDate(k.tanggal)}</td>
+      <td data-label="Catatan">${escapeHtml(k.catatan || '-')}</td>
+      <td data-label="Link Drive">${linkTag}</td>
+      <td data-label=""><button class="ghost sans" onclick="openKegiatanModal('${k.id}')">Edit</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function openKegiatanModal(id) {
+  editingKegiatanId = id || null;
+  document.getElementById('kegiatanModalMsg').textContent = '';
+  document.getElementById('kegiatanDeleteBtn').style.display = id ? 'inline-block' : 'none';
+  document.getElementById('kegiatanModalTitle').textContent = id ? 'Ubah Kegiatan Sarana' : 'Catat Kegiatan Sarana';
+
+  if (id) {
+    const k = kegiatanEntries.find(x => x.id === id);
+    document.getElementById('k_tanggal').value = k.tanggal || '';
+    document.getElementById('k_catatan').value = k.catatan || '';
+    document.getElementById('k_linkDrive').value = k.linkDrive || '';
+  } else {
+    document.getElementById('k_tanggal').value = new Date().toISOString().slice(0,10);
+    document.getElementById('k_catatan').value = '';
+    document.getElementById('k_linkDrive').value = '';
+  }
+  document.getElementById('kegiatanModalOverlay').classList.add('active');
+}
+
+function closeKegiatanModal() {
+  document.getElementById('kegiatanModalOverlay').classList.remove('active');
+  editingKegiatanId = null;
+}
+
+async function saveKegiatan() {
+  const msg = document.getElementById('kegiatanModalMsg');
+  const tanggal = document.getElementById('k_tanggal').value;
+  const catatan = document.getElementById('k_catatan').value.trim();
+
+  if (!tanggal || !catatan) {
+    msg.textContent = 'Tanggal dan catatan kegiatan wajib diisi.';
+    msg.className = 'status-msg err';
+    return;
+  }
+  if (!firebaseReady) {
+    msg.textContent = 'Firebase belum terhubung.';
+    msg.className = 'status-msg err';
+    return;
+  }
+
+  const data = {
+    tanggal, catatan,
+    linkDrive: document.getElementById('k_linkDrive').value.trim(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  try {
+    if (editingKegiatanId) {
+      await db.collection('kegiatan').doc(editingKegiatanId).update(data);
+    } else {
+      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection('kegiatan').add(data);
+    }
+    closeKegiatanModal();
+  } catch (e) {
+    msg.textContent = 'Gagal menyimpan: ' + e.message;
+    msg.className = 'status-msg err';
+  }
+}
+
+async function deleteKegiatan() {
+  if (!editingKegiatanId) return;
+  if (!confirm('Hapus catatan kegiatan ini?')) return;
+  try {
+    await db.collection('kegiatan').doc(editingKegiatanId).delete();
+    closeKegiatanModal();
+  } catch (e) {
+    document.getElementById('kegiatanModalMsg').textContent = 'Gagal menghapus: ' + e.message;
+    document.getElementById('kegiatanModalMsg').className = 'status-msg err';
+  }
+}
+
+/* =========================================================================
+   9) REKAP (satu tab, toggle Bulanan / Tahunan)
+   ========================================================================= */
+function getPeriodData() {
+  const year = parseInt(document.getElementById('recapYear').value);
+  const month = parseInt(document.getElementById('recapMonth').value);
+
+  let peminjaman, kegiatan, label;
+  if (currentPeriod === 'bulanan') {
+    peminjaman = entries.filter(e => e.tglPinjam && (d => d.getMonth() === month && d.getFullYear() === year)(new Date(e.tglPinjam + 'T00:00:00')));
+    kegiatan = kegiatanEntries.filter(k => k.tanggal && (d => d.getMonth() === month && d.getFullYear() === year)(new Date(k.tanggal + 'T00:00:00')));
+    label = `${monthNames[month]} ${year}`;
+  } else {
+    peminjaman = entries.filter(e => e.tglPinjam && new Date(e.tglPinjam + 'T00:00:00').getFullYear() === year);
+    kegiatan = kegiatanEntries.filter(k => k.tanggal && new Date(k.tanggal + 'T00:00:00').getFullYear() === year);
+    label = `Tahun ${year}`;
+  }
+  return { peminjaman, kegiatan, label, year, month };
+}
+
+function renderRekap() {
+  const { peminjaman, kegiatan, label } = getPeriodData();
+  const kembali = peminjaman.filter(e => e.status === 'Dikembalikan').length;
+  const dipinjam = peminjaman.length - kembali;
+
+  document.getElementById('recapGrid').innerHTML = `
+    <div class="recap-item"><div class="num">${peminjaman.length}</div><div class="label">Total Peminjaman — ${label}</div></div>
+    <div class="recap-item"><div class="num" style="color:var(--amber)">${dipinjam}</div><div class="label">Masih Dipinjam</div></div>
+    <div class="recap-item"><div class="num" style="color:var(--green)">${kembali}</div><div class="label">Sudah Dikembalikan</div></div>
+    <div class="recap-item"><div class="num" style="color:var(--blue)">${kegiatan.length}</div><div class="label">Kegiatan Sarana</div></div>
+  `;
+
+  const pBody = document.getElementById('recapPeminjamanBody');
+  pBody.innerHTML = peminjaman.map(e => `
+    <tr>
+      <td data-label="Peminjam">${escapeHtml(e.nama)}</td>
+      <td data-label="Barang">${escapeHtml(e.barang)}</td>
+      <td data-label="Tgl Pinjam">${formatDate(e.tglPinjam)}</td>
+      <td data-label="Status"><span class="badge ${e.status==='Dikembalikan'?'kembali':'dipinjam'}">${e.status}</span></td>
+    </tr>
+  `).join('');
+  document.getElementById('recapPeminjamanEmpty').style.display = peminjaman.length ? 'none' : 'block';
+
+  const kBody = document.getElementById('recapKegiatanBody');
+  kBody.innerHTML = kegiatan.map(k => `
+    <tr>
+      <td data-label="Tanggal">${formatDate(k.tanggal)}</td>
+      <td data-label="Catatan">${escapeHtml(k.catatan)}</td>
+      <td data-label="Link">${k.linkDrive ? `<a href="${k.linkDrive}" target="_blank" rel="noopener">Buka Link</a>` : '-'}</td>
+    </tr>
+  `).join('');
+  document.getElementById('recapKegiatanEmpty').style.display = kegiatan.length ? 'none' : 'block';
+}
+
+/* =========================================================================
+   10) EXPORT EXCEL & PDF
+   ========================================================================= */
+function peminjamanRow(e) {
+  return {
+    'Nama Peminjam': e.nama || '', 'Barang': e.barang || '',
+    'Tanggal Pinjam': formatDate(e.tglPinjam), 'Tanggal Kembali': formatDate(e.tglKembali),
+    'Status': e.status || ''
+  };
+}
+function kegiatanRow(k) {
+  return { 'Tanggal': formatDate(k.tanggal), 'Catatan Kegiatan': k.catatan || '', 'Link Drive': k.linkDrive || '' };
+}
+
+function exportExcel(filename, sheets) {
+  const wb = XLSX.utils.book_new();
+  Object.keys(sheets).forEach(name => {
+    const ws = XLSX.utils.json_to_sheet(sheets[name]);
+    XLSX.utils.book_append_sheet(wb, ws, name.substring(0, 31));
+  });
+  XLSX.writeFile(wb, filename);
+}
+
+function printReport(title, subtitle, sections) {
+  // sections: [{ heading, columns, rows }]
+  const win = window.open('', '_blank');
+  const body = sections.map(s => {
+    const thead = s.columns.map(c => `<th>${c}</th>`).join('');
+    const tbody = s.rows.map(r => `<tr>${s.columns.map(c => `<td>${r[c] ?? ''}</td>`).join('')}</tr>`).join('');
+    return `<h2>${s.heading}</h2><table><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table>`;
+  }).join('<div style="height:24px"></div>');
+
+  win.document.write(`
+    <html><head><title>${title}</title>
+    <style>
+      body{font-family:Arial,sans-serif;padding:24px;color:#1b2a41;}
+      h1{font-size:18px;margin-bottom:2px;}
+      h2{font-size:13px;margin:0 0 8px;}
+      p{font-size:12px;color:#555;margin-top:0;margin-bottom:16px;}
+      table{width:100%;border-collapse:collapse;font-size:11px;}
+      th,td{border:1px solid #ccc;padding:6px 8px;text-align:left;}
+      th{background:#f2efe6;}
+    </style></head>
+    <body>
+      <h1>${title}</h1>
+      <p>${subtitle}</p>
+      ${body}
+      <script>window.onload = () => { window.print(); };<\/script>
+    </body></html>
+  `);
+  win.document.close();
+}
+
+function exportDaftarExcel() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const statusFilter = document.getElementById('filterStatus').value;
+  const data = entries.filter(e => {
+    const matchSearch = !search || (e.nama||'').toLowerCase().includes(search) || (e.barang||'').toLowerCase().includes(search);
+    const matchStatus = !statusFilter || e.status === statusFilter;
+    return matchSearch && matchStatus;
+  }).map(peminjamanRow);
+  exportExcel('Jurnal-Sarana-Peminjaman.xlsx', { 'Peminjaman': data });
+}
+function exportDaftarPDF() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const statusFilter = document.getElementById('filterStatus').value;
+  const data = entries.filter(e => {
+    const matchSearch = !search || (e.nama||'').toLowerCase().includes(search) || (e.barang||'').toLowerCase().includes(search);
+    const matchStatus = !statusFilter || e.status === statusFilter;
+    return matchSearch && matchStatus;
+  }).map(peminjamanRow);
+  printReport('Jurnal Sarana — Daftar Peminjaman', `Dicetak ${new Date().toLocaleDateString('id-ID')} · ${data.length} catatan`,
+    [{ heading: 'Peminjaman', columns: ['Nama Peminjam','Barang','Tanggal Pinjam','Tanggal Kembali','Status'], rows: data }]);
+}
+
+function exportKegiatanExcel() {
+  const search = document.getElementById('searchKegiatan').value.toLowerCase();
+  const data = kegiatanEntries.filter(k => !search || (k.catatan||'').toLowerCase().includes(search)).map(kegiatanRow);
+  exportExcel('Jurnal-Sarana-Kegiatan.xlsx', { 'Kegiatan Sarana': data });
+}
+function exportKegiatanPDF() {
+  const search = document.getElementById('searchKegiatan').value.toLowerCase();
+  const data = kegiatanEntries.filter(k => !search || (k.catatan||'').toLowerCase().includes(search)).map(kegiatanRow);
+  printReport('Jurnal Sarana — Kegiatan Sarana', `Dicetak ${new Date().toLocaleDateString('id-ID')} · ${data.length} catatan`,
+    [{ heading: 'Kegiatan Sarana', columns: ['Tanggal','Catatan Kegiatan','Link Drive'], rows: data }]);
+}
+
+function exportRekapExcel() {
+  const { peminjaman, kegiatan, label } = getPeriodData();
+  exportExcel(`Jurnal-Sarana-Rekap-${label.replace(/\s+/g,'-')}.xlsx`, {
+    'Peminjaman': peminjaman.map(peminjamanRow),
+    'Kegiatan Sarana': kegiatan.map(kegiatanRow)
+  });
+}
+function exportRekapPDF() {
+  const { peminjaman, kegiatan, label } = getPeriodData();
+  printReport(`Jurnal Sarana — Rekap ${label}`, `${peminjaman.length} peminjaman · ${kegiatan.length} kegiatan sarana`, [
+    { heading: 'Peminjaman', columns: ['Nama Peminjam','Barang','Tanggal Pinjam','Tanggal Kembali','Status'], rows: peminjaman.map(peminjamanRow) },
+    { heading: 'Kegiatan Sarana', columns: ['Tanggal','Catatan Kegiatan','Link Drive'], rows: kegiatan.map(kegiatanRow) }
+  ]);
+}
+
+/* =========================================================================
+   11) CEK SESI SAAT HALAMAN DIMUAT
+   ========================================================================= */
+window.addEventListener('load', () => {
+  if (sessionStorage.getItem('js_logged_in') === '1') {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initAppData();
+  }
+});
+</script>
+</body>
+</html>
